@@ -1,3 +1,5 @@
+name: pangolin
+
 services:
   crowdsec:
     command: -t
@@ -25,9 +27,9 @@ services:
       - 6060:6060
     restart: unless-stopped
     volumes:
-      - ${CONFIG_LOCATION}/crowdsec:/etc/crowdsec
-      - ${CONFIG_LOCATION}/crowdsec/db:/var/lib/crowdsec/data
-      - ${CONFIG_LOCATION}/traefik/logs:/var/log/traefik
+      - ./config/crowdsec:/etc/crowdsec
+      - ./config/crowdsec/db:/var/lib/crowdsec/data
+      - ./config/traefik/logs:/var/log/traefik
   gerbil:
     cap_add:
       - NET_ADMIN
@@ -40,17 +42,24 @@ services:
     depends_on:
       pangolin:
         condition: service_healthy
-    image: docker.io/fosrl/gerbil:latest
+    image: docker.io/fosrl/gerbil:1.4.3
     ports:
       - 51820:51820/udp
       - 21820:21820/udp
       - 443:443
+      - 443:443/udp
       - 80:80
     restart: unless-stopped
     volumes:
-      - ${CONFIG_LOCATION}:/var/config
+      - ./config/:/var/config
   pangolin:
     container_name: pangolin
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+        reservations:
+          memory: 512m
     healthcheck:
       interval: 10s
       retries: 15
@@ -60,10 +69,10 @@ services:
         - -f
         - http://localhost:3001/api/v1/
       timeout: 10s
-    image: docker.io/fosrl/pangolin:ee-latest
+    image: docker.io/fosrl/pangolin:ee-1.21.1
     restart: unless-stopped
     volumes:
-      - ${CONFIG_LOCATION}:/app/config
+      - ./config:/app/config
   traefik:
     command:
       - --configFile=/etc/traefik/traefik_config.yml
@@ -73,14 +82,15 @@ services:
         condition: service_healthy
       pangolin:
         condition: service_healthy
-    image: docker.io/traefik:latest
+    image: docker.io/traefik:v3.7
     network_mode: service:gerbil
     restart: unless-stopped
     volumes:
-      - ${CONFIG_LOCATION}/traefik:/etc/traefik:ro
-      - ${CONFIG_LOCATION}/letsencrypt:/letsencrypt
-      - ${CONFIG_LOCATION}/traefik/logs:/var/log/traefik
+      - ./config/traefik:/etc/traefik:ro
+      - ./config/letsencrypt:/letsencrypt
+      - ./config/traefik/logs:/var/log/traefik
 networks:
   default:
     driver: bridge
-    name: pangolin
+    enable_ipv6: true
+    name: pangolin_frontend
