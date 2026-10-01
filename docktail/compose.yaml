@@ -1,6 +1,6 @@
 services:
   tailscale:
-    image: tailscale/tailscale:latest
+    image: tailscale/tailscale:v1.102.5
     container_name: tailscale
     network_mode: host
     environment:
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   docktail:
-    image: ghcr.io/marvinvr/docktail:latest
+    image: ghcr.io/marvinvr/docktail:1.8.3
     container_name: docktail
     depends_on:
       - tailscale
