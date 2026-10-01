@@ -1,0 +1,33 @@
+services:
+  zennotes:
+    image: adibhanna/zennotes:2.60.0
+    container_name: zennotes
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      ZENNOTES_AUTH_TOKEN_FILE: /data/auth-token
+      ZENNOTES_PERSIST_SESSIONS: "1"
+      ZENNOTES_BEHIND_TLS: "1"
+      ZENNOTES_TRUSTED_PROXIES: "172.16.0.0/12"
+    volumes:
+      - ${VAULT_LOCATION}:/workspace
+      - ${DATA_LOCATION}:/data
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=zennotes"
+      - "docktail.service.port=7878"
+      - "docktail.service.protocol=http"
+      - "docktail.service.service-port=443"
+      - "docktail.service.service-protocol=https"
+      - "docktail.service.network=zennotes"
+
+networks:
+  default:
+    name: zennotes
