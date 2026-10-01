@@ -1,0 +1,35 @@
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    network_mode: host
+    environment:
+      - TS_AUTHKEY=${TAILSCALE_OAUTH_CLIENT_SECRET}?ephemeral=false
+      - TS_EXTRA_ARGS=--advertise-tags=tag:server
+      - TS_HOSTNAME=${TS_HOSTNAME}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SOCKET=/var/run/tailscale/tailscaled.sock
+    volumes:
+      - ${TAILSCALE_STATE_LOCATION}:/var/lib/tailscale
+      - tailscale-socket:/var/run/tailscale
+    restart: unless-stopped
+
+  docktail:
+    image: ghcr.io/marvinvr/docktail:latest
+    container_name: docktail
+    depends_on:
+      - tailscale
+    environment:
+      - TAILSCALE_OAUTH_CLIENT_ID=${TAILSCALE_OAUTH_CLIENT_ID}
+      - TAILSCALE_OAUTH_CLIENT_SECRET=${TAILSCALE_OAUTH_CLIENT_SECRET}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - tailscale-socket:/var/run/tailscale
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  tailscale-socket:

@@ -4,6 +4,7 @@ This repository contains Docker Compose configurations for my homelab services, 
 
 ## Services
 
+- **DockTail** - Exposes Docker containers as Tailscale Services, with a Tailscale sidecar for the host.
 - **Immich** - High performance self-hosted photo and video management solution.
 - **Newt** - A tunneling client for Pangolin.
 - **Nextcloud AIO** - Self-hosted productivity platform and file sync
