@@ -5,7 +5,7 @@ services:
     network_mode: host
     environment:
       - TS_AUTHKEY=${TAILSCALE_OAUTH_CLIENT_SECRET}?ephemeral=false
-      - TS_EXTRA_ARGS=--advertise-tags=tag:server
+      - TS_EXTRA_ARGS=--advertise-tags=tag:server --advertise-exit-node
       - TS_HOSTNAME=${TS_HOSTNAME}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_SOCKET=/var/run/tailscale/tailscaled.sock
