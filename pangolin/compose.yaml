@@ -1,5 +1,9 @@
 name: pangolin
-
+networks:
+  default:
+    driver: bridge
+    enable_ipv6: true
+    name: pangolin_frontend
 services:
   crowdsec:
     command: -t
@@ -42,7 +46,7 @@ services:
     depends_on:
       pangolin:
         condition: service_healthy
-    image: docker.io/fosrl/gerbil:1.5.1
+    image: docker.io/fosrl/gerbil:1.5.2
     ports:
       - 51820:51820/udp
       - 21820:21820/udp
@@ -69,7 +73,7 @@ services:
         - -f
         - http://localhost:3001/api/v1/
       timeout: 10s
-    image: docker.io/fosrl/pangolin:ee-1.22.2
+    image: docker.io/fosrl/pangolin:ee-1.24.0
     restart: unless-stopped
     volumes:
       - ./config:/app/config
@@ -89,8 +93,3 @@ services:
       - ./config/traefik:/etc/traefik:ro
       - ./config/letsencrypt:/letsencrypt
       - ./config/traefik/logs:/var/log/traefik
-networks:
-  default:
-    driver: bridge
-    enable_ipv6: true
-    name: pangolin_frontend
