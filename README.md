@@ -4,6 +4,7 @@ This repository contains Docker Compose configurations for my homelab services, 
 
 ## Services
 
+- **Arcane** - Docker stack manager that deploys the other stacks. Its manager (`arcane`), agent (`arcane-agent`) and edge agent (`arcane-edge-agent`) are deployed by hand, because Arcane can't safely redeploy itself.
 - **DockTail** - Exposes Docker containers as Tailscale Services, with a Tailscale sidecar for the host.
 - **Immich** - High performance self-hosted photo and video management solution.
 - **Newt** - A tunneling client for Pangolin.

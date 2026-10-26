@@ -1,0 +1,38 @@
+services:
+  arcane:
+    image: ghcr.io/getarcaneapp/manager:v2.17.1
+    container_name: arcane
+    restart: unless-stopped
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=arcane"
+      - "docktail.service.port=3552"
+      - "docktail.service.protocol=http"
+      - "docktail.service.service-port=443"
+      - "docktail.service.service-protocol=https"
+      - "docktail.service.network=arcane"
+    ports:
+      - "3552:3552"
+    group_add:
+      - "999"                      # gid of /var/run/docker.sock on truenas01
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ARCANE_DATA_DIR}:/app/data
+      - ${ARCANE_BACKUPS_DIR}:/backups
+    environment:
+      - APP_URL=${ARCANE_APP_URL}
+      - PUID=568
+      - PGID=568
+      - ENCRYPTION_KEY=${ARCANE_ENCRYPTION_KEY}
+      - JWT_SECRET=${ARCANE_JWT_SECRET}
+    healthcheck:
+      test: ['CMD', './arcane', 'health', '--timeout', '2s']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    cgroup: host
+
+networks:
+  default:
+    name: arcane

@@ -1,0 +1,16 @@
+services:
+  arcane-agent:
+    image: ghcr.io/getarcaneapp/agent:v2.17.1
+    container_name: arcane-agent
+    restart: unless-stopped
+    # Edge mode: the agent connects out to the manager over the tailnet and publishes no ports.
+    environment:
+      - EDGE_AGENT=true
+      - EDGE_TRANSPORT=websocket
+      - AGENT_TOKEN=${AGENT_TOKEN:?}
+      - MANAGER_API_URL=https://arcane.adal-tetra.ts.net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/arcane-agent/data:/app/data
+    cgroup: host
+    stop_grace_period: 15s
