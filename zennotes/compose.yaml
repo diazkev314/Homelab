@@ -1,6 +1,6 @@
 services:
   zennotes:
-    image: adibhanna/zennotes:2.60.0
+    image: adibhanna/zennotes:2.78.0
     container_name: zennotes
     restart: unless-stopped
     user: "${PUID}:${PGID}"
